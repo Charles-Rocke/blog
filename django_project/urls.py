@@ -19,5 +19,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include("blog.urls")),
-    path("accounts/", include("django.contrib.auth.urls")) # login
+    # order of urls matter here django will look into auth first then into the app for sign up
+    path("accounts/", include("django.contrib.auth.urls")), # login
+    path("accounts/", include("accounts.urls")),
 ]
