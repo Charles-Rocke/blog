@@ -51,4 +51,34 @@ class BlogTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(no_response.status_code, 404)
         self.assertContains(response, "A test title")
-        self.assertTemplateUsed(response, "post_detail.html")        
+        self.assertTemplateUsed(response, "post_detail.html")
+        
+    # test post create view
+    def test_post_createview(self):
+        response = self.client.post(reverse("post_new"),
+                                    {
+                                        "title" : "New title",
+                                        "body" : "body boi",
+                                        "author" : self.user.id,
+                                    },
+                                    )
+        self.assertEqual(response.status_code, 302) # 302 is a redirect status code
+        self.assertEqual(Post.objects.last().title, "New title")
+        self.assertEqual(Post.objects.last().body, "body boi")
+        
+    # test post update view
+    def test_post_updateview(self):
+        response = self.client.post(reverse("post_edit", args = "1",),
+                                    {
+                                        "title" : "updated title",
+                                        "body" : "updated body"
+                                    },
+                                    )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(Post.objects.last().title, "updated title")
+        self.assertEqual(Post.objects.last().body, "updated body")
+        
+    # test delete view
+    def test_post_deleteview(self):
+        response = self.client.post(reverse("post_delete", args = "1"))
+        self.assertEqual(response.status_code, 302)
